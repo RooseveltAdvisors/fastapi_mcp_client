@@ -1,0 +1,73 @@
+site_name: FastAPI MCP Client
+site_description: A client library for interacting with FastAPI MCP-enabled services
+site_url: https://github.com/your-username/fastapi-mcp-client
+repo_url: https://github.com/your-username/fastapi-mcp-client
+repo_name: your-username/fastapi-mcp-client
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - search.highlight
+    - content.tabs.link
+    - content.code.copy
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: true
+            show_submodules: true
+            heading_level: 3
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - footnotes
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - User Guide:
+    - Installation: guide/installation.md
+    - Getting Started: guide/getting-started.md
+    - Configuration: guide/configuration.md
+    - Streaming: guide/streaming.md
+    - Error Handling: guide/error-handling.md
+  - API Reference:
+    - Client: api/client.md
+    - Configuration: api/config.md
+    - Exceptions: api/exceptions.md
+    - Utilities: api/utils.md
+  - Examples:
+    - Basic Example: examples/basic.md
+    - Streaming Example: examples/streaming.md
+  - Contributing: contributing.md
+  - Changelog: changelog.md 
