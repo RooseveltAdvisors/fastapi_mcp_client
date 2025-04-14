@@ -35,4 +35,4 @@ jobs:
       run: uv run mypy src/fastapi_mcp_client
     
     - name: Test with pytest
-      run: uv run pytest tests/ --cov=fastapi_mcp_client --cov-report=xml
+      run: uv run pytest --tb=short --disable-warnings -q
