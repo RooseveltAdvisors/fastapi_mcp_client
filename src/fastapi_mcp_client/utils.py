@@ -50,7 +50,8 @@ def parse_json_data(data: str) -> Union[Dict[str, Any], List[Any], str]:
         Parsed JSON object or the original string if parsing fails
     """
     try:
-        return json.loads(data)
+        parsed_data: Union[Dict[str, Any], List[Any]] = json.loads(data)
+        return parsed_data
     except json.JSONDecodeError:
         return data
 

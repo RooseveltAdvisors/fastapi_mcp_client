@@ -5,7 +5,7 @@ Main MCP client implementation for SSE streaming.
 import asyncio
 import json
 import logging
-from typing import Any, AsyncIterator, Dict, Optional, Union
+from typing import Any, AsyncIterator, Dict, Optional, Union, type_check_only, TypeVar, Type
 
 import httpx
 
@@ -76,24 +76,34 @@ class MCPClient:
 
         logger.debug(f"MCPClient initialized with base URL: {base_url}")
 
-    async def close(self):
+    async def close(self) -> None:
         """Close the HTTP clients."""
         await self._async_client.aclose()
         self._sync_client.close()
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "MCPClient":
         """Async context manager entry."""
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(
+        self, 
+        exc_type: Optional[type[BaseException]], 
+        exc_val: Optional[BaseException], 
+        exc_tb: Optional[Any]
+    ) -> None:
         """Async context manager exit."""
         await self.close()
 
-    def __enter__(self):
+    def __enter__(self) -> "MCPClient":
         """Sync context manager entry."""
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(
+        self, 
+        exc_type: Optional[type[BaseException]], 
+        exc_val: Optional[BaseException], 
+        exc_tb: Optional[Any]
+    ) -> None:
         """Sync context manager exit."""
         self._sync_client.close()
 
@@ -133,7 +143,7 @@ class MCPClient:
         # Return a single-item async iterator if streaming was requested
         if stream:
 
-            async def _single_result_iterator():
+            async def _single_result_iterator() -> AsyncIterator[Dict[str, Any]]:
                 yield result
 
             return _single_result_iterator()
@@ -170,7 +180,7 @@ class MCPClient:
 
         # Event tracking
         session_id = None
-        message_queue = asyncio.Queue()
+        message_queue: asyncio.Queue[Dict[str, Any]] = asyncio.Queue()
         session_id_found = asyncio.Event()
 
         try:
@@ -188,7 +198,7 @@ class MCPClient:
                     )
 
                 # Start a background task to read from the SSE stream
-                async def read_sse_stream():
+                async def read_sse_stream() -> None:
                     nonlocal session_id
                     first_data_event = True
                     buffer = ""
@@ -228,15 +238,19 @@ class MCPClient:
                                     # Process the event data
                                     try:
                                         message = parse_json_data(event_data)
+                                        
+                                        # Convert message to dict if it's not already
+                                        if not isinstance(message, dict):
+                                            if isinstance(message, list):
+                                                message = {"data": message}
+                                            else:
+                                                message = {"data": str(message)}
 
                                         # Check for session_id in message
-                                        if isinstance(message, dict) and not session_id:
-                                            if "session_id" in message:
-                                                session_id = message["session_id"]
-                                                logger.debug(
-                                                    f"Found session_id in message: {session_id}"
-                                                )
-                                                session_id_found.set()
+                                        if not session_id and "session_id" in message:
+                                            session_id = message["session_id"]
+                                            logger.debug(f"Found session_id in message: {session_id}")
+                                            session_id_found.set()
 
                                         await message_queue.put(message)
                                     except Exception as e:
@@ -265,7 +279,7 @@ class MCPClient:
                         await message_queue.put({"error": f"SSE stream error: {str(e)}"})
                     finally:
                         # Signal end of stream
-                        await message_queue.put(None)
+                        await message_queue.put({"done": True})
                         # Ensure session_id_found is set to avoid blocking
                         if not session_id_found.is_set():
                             session_id_found.set()
@@ -308,7 +322,7 @@ class MCPClient:
                 # Yield messages from the queue
                 while True:
                     message = await message_queue.get()
-                    if message is None:  # End of stream
+                    if message.get("done", False):  # End of stream
                         break
                     if "error" in message:
                         raise MCPStreamError(message["error"])
@@ -361,7 +375,8 @@ class MCPClient:
                 return {}
 
             try:
-                return response.json()
+                result: Dict[str, Any] = response.json()
+                return result
             except json.JSONDecodeError:
                 logger.warning(f"Response is not valid JSON: {response.text}")
                 return {"text": response.text}
