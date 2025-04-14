@@ -5,7 +5,7 @@ Main MCP client implementation for SSE streaming.
 import asyncio
 import json
 import logging
-from typing import Any, AsyncIterator, Dict, Optional, Union, type_check_only, TypeVar, Type
+from typing import Any, AsyncIterator, Dict, Optional, Union
 
 import httpx
 
@@ -86,10 +86,10 @@ class MCPClient:
         return self
 
     async def __aexit__(
-        self, 
-        exc_type: Optional[type[BaseException]], 
-        exc_val: Optional[BaseException], 
-        exc_tb: Optional[Any]
+        self,
+        exc_type: Optional[type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[Any],
     ) -> None:
         """Async context manager exit."""
         await self.close()
@@ -99,10 +99,10 @@ class MCPClient:
         return self
 
     def __exit__(
-        self, 
-        exc_type: Optional[type[BaseException]], 
-        exc_val: Optional[BaseException], 
-        exc_tb: Optional[Any]
+        self,
+        exc_type: Optional[type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[Any],
     ) -> None:
         """Sync context manager exit."""
         self._sync_client.close()
@@ -238,7 +238,7 @@ class MCPClient:
                                     # Process the event data
                                     try:
                                         message = parse_json_data(event_data)
-                                        
+
                                         # Convert message to dict if it's not already
                                         if not isinstance(message, dict):
                                             if isinstance(message, list):
@@ -249,7 +249,9 @@ class MCPClient:
                                         # Check for session_id in message
                                         if not session_id and "session_id" in message:
                                             session_id = message["session_id"]
-                                            logger.debug(f"Found session_id in message: {session_id}")
+                                            logger.debug(
+                                                f"Found session_id in message: {session_id}"
+                                            )
                                             session_id_found.set()
 
                                         await message_queue.put(message)
