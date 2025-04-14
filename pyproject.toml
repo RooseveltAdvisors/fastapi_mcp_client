@@ -28,10 +28,10 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/your-username/fastapi-mcp-client"
-Documentation = "https://github.com/your-username/fastapi-mcp-client#readme"
-Issues = "https://github.com/your-username/fastapi-mcp-client/issues"
-Changelog = "https://github.com/your-username/fastapi-mcp-client/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/RooseveltAdvisors/fastapi-mcp-client"
+Documentation = "https://github.com/RooseveltAdvisors/fastapi-mcp-client#readme"
+Issues = "https://github.com/RooseveltAdvisors/fastapi-mcp-client/issues"
+Changelog = "https://github.com/RooseveltAdvisors/fastapi-mcp-client/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 dev = [

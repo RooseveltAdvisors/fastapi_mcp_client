@@ -15,37 +15,37 @@ def generate_request_id() -> str:
 def parse_sse_line(line: str) -> Optional[Dict[str, str]]:
     """
     Parse a single SSE line into its components.
-    
+
     Args:
         line: The SSE line to parse
-        
+
     Returns:
         Dictionary with event fields or None if the line is empty or invalid
     """
     if not line or not line.strip():
         return None
-    
+
     line = line.strip()
     if not line:
         return None
-        
+
     if ":" not in line:
         return {"field": "message", "value": line}
-        
+
     field, value = line.split(":", 1)
     if value.startswith(" "):
         value = value[1:]
-        
+
     return {"field": field, "value": value}
 
 
 def parse_json_data(data: str) -> Union[Dict[str, Any], List[Any], str]:
     """
     Parse JSON data, returning the original string if parsing fails.
-    
+
     Args:
         data: String to parse as JSON
-        
+
     Returns:
         Parsed JSON object or the original string if parsing fails
     """
@@ -55,15 +55,17 @@ def parse_json_data(data: str) -> Union[Dict[str, Any], List[Any], str]:
         return data
 
 
-def create_mcp_initialize_payload(request_id: str, client_info: Dict[str, str], protocol_version: str) -> Dict[str, Any]:
+def create_mcp_initialize_payload(
+    request_id: str, client_info: Dict[str, str], protocol_version: str
+) -> Dict[str, Any]:
     """
     Create an MCP initialize payload.
-    
+
     Args:
         request_id: Unique request ID
         client_info: Client information
         protocol_version: MCP protocol version
-        
+
     Returns:
         Dictionary containing the initialize payload
     """
@@ -75,20 +77,22 @@ def create_mcp_initialize_payload(request_id: str, client_info: Dict[str, str], 
             "traceId": generate_request_id(),
             "clientInfo": client_info,
             "protocolVersion": protocol_version,
-            "capabilities": {}
-        }
+            "capabilities": {},
+        },
     }
 
 
-def create_mcp_tool_call_payload(request_id: str, operation_id: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+def create_mcp_tool_call_payload(
+    request_id: str, operation_id: str, params: Optional[Dict[str, Any]] = None
+) -> Dict[str, Any]:
     """
     Create an MCP tool call payload.
-    
+
     Args:
         request_id: Unique request ID
         operation_id: The operation to call
         params: Parameters for the operation
-        
+
     Returns:
         Dictionary containing the tool call payload
     """
@@ -96,8 +100,5 @@ def create_mcp_tool_call_payload(request_id: str, operation_id: str, params: Opt
         "id": request_id,
         "jsonrpc": "2.0",
         "method": "tools/call",
-        "params": {
-            "name": operation_id,
-            "arguments": params or {}
-        }
-    } 
+        "params": {"name": operation_id, "arguments": params or {}},
+    }

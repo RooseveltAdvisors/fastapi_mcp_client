@@ -45,6 +45,74 @@ if grep -q "pypi-your-token-here\|pypi-test-your-token-here" "$PYPIRC_PATH"; the
     exit 1
 fi
 
+# Run pytest first - fail if tests don't pass
+echo -e "${GREEN}Running tests...${NC}"
+uv add --dev pytest
+if ! uv run -m pytest; then
+    echo -e "${RED}Tests failed! Aborting publication process.${NC}"
+    exit 1
+fi
+echo -e "${GREEN}All tests passed.${NC}"
+
+# Run ruff format
+echo -e "${GREEN}Running code formatting...${NC}"
+uv add --dev ruff
+uv run -m ruff format .
+echo -e "${GREEN}Code formatting completed.${NC}"
+
+# Run ruff check
+echo -e "${GREEN}Running code linting...${NC}"
+if ! uv run -m ruff check .; then
+    echo -e "${RED}Code linting failed! Please fix the issues and try again.${NC}"
+    exit 1
+fi
+echo -e "${GREEN}Code linting passed.${NC}"
+
+# Get version information interactively
+echo -e "${GREEN}Version management${NC}"
+# Extract current version
+CURRENT_VERSION=$(sed -n 's/^version = "\([^"]*\)"/\1/p' pyproject.toml)
+if [ -z "$CURRENT_VERSION" ]; then
+    echo -e "${RED}Could not find version in pyproject.toml${NC}"
+    exit 1
+fi
+
+echo -e "${YELLOW}Current version: ${CURRENT_VERSION}${NC}"
+read -p "Enter new version (leave empty to keep current): " NEW_VERSION
+NEW_VERSION=${NEW_VERSION:-$CURRENT_VERSION}
+
+if [ "$NEW_VERSION" != "$CURRENT_VERSION" ]; then
+    # Update version in pyproject.toml
+    sed -i.bak "s/version = \"$CURRENT_VERSION\"/version = \"$NEW_VERSION\"/" pyproject.toml
+    rm -f pyproject.toml.bak  # Remove backup file created by sed
+    echo -e "${GREEN}Version updated from $CURRENT_VERSION to $NEW_VERSION${NC}"
+    
+    # Get commit message
+    read -p "Enter commit message (default: Bump version to $NEW_VERSION): " COMMIT_MSG
+    COMMIT_MSG=${COMMIT_MSG:-"Bump version to $NEW_VERSION"}
+    
+    # Commit the version change
+    git add pyproject.toml
+    git commit -m "$COMMIT_MSG"
+    
+    # Create a git tag
+    git tag -a "v$NEW_VERSION" -m "Version $NEW_VERSION"
+    echo -e "${GREEN}Created git tag v$NEW_VERSION${NC}"
+    
+    # Push changes and tag to remote
+    echo -e "${GREEN}Pushing changes to remote...${NC}"
+    git push origin main
+    git push origin "v$NEW_VERSION"
+    echo -e "${GREEN}Changes pushed to remote.${NC}"
+else
+    echo -e "${YELLOW}Version unchanged.${NC}"
+    read -p "Continue with the current version? (y/n) " continue
+    if [[ ! "$continue" =~ ^[Yy]$ ]]; then
+        echo -e "${RED}Publication process aborted.${NC}"
+        exit 0
+    fi
+fi
+
 # Install dependencies if needed
 command -v twine &> /dev/null || pip install --user twine
 

@@ -2,13 +2,11 @@
 Unit tests for the MCPClient class.
 """
 
-import json
-from unittest.mock import patch, AsyncMock, MagicMock
 import pytest
 import httpx
 import respx
-from fastapi_mcp_client import MCPClient, MCPClientConfig
-from fastapi_mcp_client.exceptions import MCPClientError, MCPConnectionError
+from fastapi_mcp_client import MCPClient
+from fastapi_mcp_client.exceptions import MCPClientError
 
 
 @pytest.fixture
@@ -45,19 +43,14 @@ async def test_call_operation_direct(client):
             200,
             json={
                 "context": [
-                    {
-                        "id": "1",
-                        "source": "test",
-                        "text": "This is a test",
-                        "similarity": 0.95
-                    }
+                    {"id": "1", "source": "test", "text": "This is a test", "similarity": 0.95}
                 ]
-            }
+            },
         )
     )
-    
+
     result = await client._call_operation_direct("ground_query", {"query": "test", "top_k": 1})
-    
+
     assert "context" in result
     assert len(result["context"]) == 1
     assert result["context"][0]["similarity"] == 0.95
@@ -70,15 +63,12 @@ async def test_call_operation_direct(client):
 async def test_call_operation_http_error(client):
     """Test HTTP error handling in direct API call."""
     respx.post("http://localhost:8000/ground").mock(
-        return_value=httpx.Response(
-            404,
-            json={"detail": "Not found"}
-        )
+        return_value=httpx.Response(404, json={"detail": "Not found"})
     )
-    
+
     with pytest.raises(MCPClientError) as excinfo:
         await client._call_operation_direct("ground_query", {"query": "test", "top_k": 1})
-    
+
     assert "HTTP error: 404" in str(excinfo.value)
     await client.close()
 
@@ -92,17 +82,17 @@ async def test_get_operation_details(client):
     assert method == "POST"
     assert path == "/ground"
     assert params == {"query": "test"}
-    
+
     # Test custom operation format
     method, path, params = client._get_operation_details("GET:/custom/path", {"param": "value"})
     assert method == "GET"
     assert path == "/custom/path"
     assert params == {"param": "value"}
-    
+
     # Test fallback
     method, path, params = client._get_operation_details("unknown_operation", {"param": "value"})
     assert method == "POST"
     assert path == "/unknown_operation"
     assert params == {"param": "value"}
-    
-    await client.close() 
+
+    await client.close()

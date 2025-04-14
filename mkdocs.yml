@@ -1,8 +1,8 @@
 site_name: FastAPI MCP Client
 site_description: A client library for interacting with FastAPI MCP-enabled services
-site_url: https://github.com/your-username/fastapi-mcp-client
-repo_url: https://github.com/your-username/fastapi-mcp-client
-repo_name: your-username/fastapi-mcp-client
+site_url: https://github.com/RooseveltAdvisors/fastapi-mcp-client
+repo_url: https://github.com/RooseveltAdvisors/fastapi-mcp-client
+repo_name: RooseveltAdvisors/fastapi-mcp-client
 
 theme:
   name: material

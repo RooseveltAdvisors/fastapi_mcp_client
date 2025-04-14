@@ -53,7 +53,7 @@ The repository includes examples to help you get started. Here's how to run them
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/fastapi-mcp-client.git
+git clone https://github.com/RooseveltAdvisors/fastapi-mcp-client.git
 cd fastapi-mcp-client
 ```
 
@@ -159,7 +159,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 1. Clone the repository
    ```bash
-   git clone https://github.com/your-username/fastapi-mcp-client.git
+   git clone https://github.com/RooseveltAdvisors/fastapi-mcp-client.git
    cd fastapi-mcp-client
    ```
 

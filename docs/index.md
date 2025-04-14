@@ -77,7 +77,7 @@ sequenceDiagram
 
 ## Next Steps
 
-- Check out the provided examples in the [repository](https://github.com/your-username/fastapi-mcp-client/tree/main/examples)
+- Check out the provided examples in the [repository](https://github.com/RooseveltAdvisors/fastapi-mcp-client/tree/main/examples)
 - Explore custom client configuration options
 - Learn about advanced streaming techniques
 
@@ -87,4 +87,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/your-username/fastapi-mcp-client/blob/main/LICENSE) file for details. 
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/RooseveltAdvisors/fastapi-mcp-client/blob/main/LICENSE) file for details. 

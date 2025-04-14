@@ -1,7 +1,7 @@
 """
 FastAPI MCP Client
 
-A specialized client library for interacting with FastAPI services 
+A specialized client library for interacting with FastAPI services
 that implement the Model Context Protocol (MCP) over Server-Sent Events (SSE).
 """
 
@@ -14,6 +14,6 @@ __all__ = [
     "MCPClient",
     "MCPClientConfig",
     "MCPClientError",
-    "MCPConnectionError", 
+    "MCPConnectionError",
     "MCPStreamError",
-] 
+]

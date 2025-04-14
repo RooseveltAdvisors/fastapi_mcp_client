@@ -300,7 +300,7 @@ wheels = [
 
 [[package]]
 name = "fastapi-mcp-client"
-version = "0.1.0"
+version = "0.2.0"
 source = { editable = "." }
 dependencies = [
     { name = "httpx" },
@@ -327,6 +327,8 @@ docs = [
 [package.dev-dependencies]
 dev = [
     { name = "build" },
+    { name = "pytest" },
+    { name = "ruff" },
 ]
 
 [package.metadata]
@@ -348,7 +350,11 @@ requires-dist = [
 provides-extras = ["dev", "docs"]
 
 [package.metadata.requires-dev]
-dev = [{ name = "build", specifier = ">=1.2.2.post1" }]
+dev = [
+    { name = "build", specifier = ">=1.2.2.post1" },
+    { name = "pytest", specifier = ">=8.3.5" },
+    { name = "ruff", specifier = ">=0.11.5" },
+]
 
 [[package]]
 name = "ghp-import"
